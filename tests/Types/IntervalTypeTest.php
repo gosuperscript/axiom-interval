@@ -17,26 +17,27 @@ use Superscript\Schema\Interval\Types\IntervalType;
 #[CoversClass(IntervalType::class)]
 class IntervalTypeTest extends TestCase
 {
-    #[DataProvider('transformProvider')]
+    #[DataProvider('coerceProvider')]
     #[Test]
-    public function it_can_transform_a_value(mixed $value, Interval $expected)
+    public function it_can_coerce_a_value(mixed $value, Interval $expected)
     {
         $type = new IntervalType();
-        $this->assertTrue($type->transform($value)->unwrap()->unwrap()->isEqualTo($expected));
+        $this->assertTrue($type->coerce($value)->unwrap()->unwrap()->isEqualTo($expected));
     }
 
-    public static function transformProvider(): array
+    public static function coerceProvider(): array
     {
         return [
+            [new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed), new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed)],
             ['[1,2]', new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed)],
         ];
     }
 
     #[Test]
-    public function it_returns_err_if_it_fails_to_transform(): void
+    public function it_returns_err_if_it_fails_to_coerce(): void
     {
         $type = new IntervalType();
-        $result = $type->transform($value = 'foobar');
+        $result = $type->coerce($value = 'foobar');
         $this->assertEquals(new TransformValueException(type: 'interval', value: $value), $result->unwrapErr());
         $this->assertEquals('Unable to transform into [interval] from [\'foobar\']', $result->unwrapErr()->getMessage());
     }
@@ -45,9 +46,27 @@ class IntervalTypeTest extends TestCase
     public function it_returns_err_if_value_is_not_a_string(): void
     {
         $type = new IntervalType();
-        $result = $type->transform(123);
+        $result = $type->coerce(123);
         $this->assertEquals(new TransformValueException(type: 'interval', value: 123), $result->unwrapErr());
         $this->assertEquals('Unable to transform into [interval] from [123]', $result->unwrapErr()->getMessage());
+    }
+
+    #[DataProvider('assertProvider')]
+    #[Test]
+    public function it_can_assert_a_value(mixed $value, bool $shouldPass)
+    {
+        $type = new IntervalType();
+        $result = $type->assert($value);
+        $this->assertSame($shouldPass, $result->isOk());
+    }
+
+    public static function assertProvider(): array
+    {
+        return [
+            [new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed), true],
+            ['[1,2]', false],
+            [123, false],
+        ];
     }
 
     #[DataProvider('compareProvider')]
@@ -55,8 +74,8 @@ class IntervalTypeTest extends TestCase
     public function it_can_compare_two_values(string $a, string $b, bool $expected): void
     {
         $type = new IntervalType();
-        $a = $type->transform($a)->unwrap()->unwrap();
-        $b = $type->transform($b)->unwrap()->unwrap();
+        $a = $type->coerce($a)->unwrap()->unwrap();
+        $b = $type->coerce($b)->unwrap()->unwrap();
         $this->assertSame($expected, $type->compare($a, $b));
     }
 
@@ -74,7 +93,7 @@ class IntervalTypeTest extends TestCase
     public function it_can_format_value(string $value, string $expected): void
     {
         $type = new IntervalType();
-        $value = $type->transform($value)->unwrap()->unwrap();
+        $value = $type->coerce($value)->unwrap()->unwrap();
         $this->assertSame($expected, $type->format($value));
     }
 
