@@ -28,6 +28,7 @@ class IntervalTypeTest extends TestCase
     public static function transformProvider(): array
     {
         return [
+            [new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed), new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed)],
             ['[1,2]', new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed)],
         ];
     }
