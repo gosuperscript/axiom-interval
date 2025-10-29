@@ -44,6 +44,8 @@ The `IntervalType` class provides type transformation, comparison, and formattin
 ```php
 use Superscript\Schema\Interval\Types\IntervalType;
 use Superscript\Interval\Interval;
+use Superscript\Interval\IntervalNotation;
+use Brick\Math\BigNumber;
 
 $type = new IntervalType();
 
