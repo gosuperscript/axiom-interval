@@ -19,7 +19,7 @@ use function Superscript\Monads\Result\Ok;
  */
 final readonly class IntervalType implements Type
 {
-    public function transform(mixed $value): Result
+    public function coerce(mixed $value): Result
     {
         return (match (true) {
             $value instanceof Interval => Ok($value),
@@ -28,6 +28,13 @@ final readonly class IntervalType implements Type
         })
             ->map(fn(Interval $interval) => Some($interval))
             ->mapErr(fn() => new TransformValueException(type: 'interval', value: $value));
+    }
+
+    public function assert(mixed $value): Result
+    {
+        return $value instanceof Interval
+            ? Ok(Some($value))
+            : Err(new TransformValueException(type: 'interval', value: $value));
     }
 
     public function compare(mixed $a, mixed $b): bool
