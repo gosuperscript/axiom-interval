@@ -1,6 +1,6 @@
 services:
   php:
-    image: superscript/schema-interval
+    image: superscript/axiom-interval
     build:
       context: .
     volumes:
