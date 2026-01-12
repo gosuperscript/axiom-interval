@@ -1,7 +1,8 @@
 {
     "name": "gosuperscript/axiom-interval",
+    "description": "A PHP library that extends gosuperscript/schema with support for Interval types, providing type-safe interval handling and operator overloading for schema validation",
     "type": "library",
-    "licsense": "proprietary",
+    "license": "MIT",
     "require": {
         "php": "^8.4",
         "ext-intl": "*",
@@ -42,11 +43,5 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://mannum.github.io/satis"
-        }
-    ]
+    "prefer-stable": true
 }
