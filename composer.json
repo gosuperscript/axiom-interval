@@ -1,7 +1,7 @@
 {
     "name": "gosuperscript/axiom-interval",
     "type": "library",
-    "licsense": "proprietary",
+    "license": "MIT",
     "require": {
         "php": "^8.4",
         "ext-intl": "*",
@@ -42,11 +42,5 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true,
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://mannum.github.io/satis"
-        }
-    ]
+    "prefer-stable": true
 }

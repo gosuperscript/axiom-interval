@@ -25,16 +25,6 @@ Install via Composer:
 composer require gosuperscript/axiom-interval
 ```
 
-> **Note**: This package uses a custom Composer repository. Make sure your `composer.json` includes:
-> ```json
-> "repositories": [
->     {
->         "type": "composer",
->         "url": "https://mannum.github.io/satis"
->     }
-> ]
-> ```
-
 ## Usage
 
 ### Interval Type
@@ -147,7 +137,7 @@ docker-compose up -d
 
 ## License
 
-Proprietary
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Credits
 
