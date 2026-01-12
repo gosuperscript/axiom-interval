@@ -1,5 +1,5 @@
 {
-    "name": "gosuperscript/schema-interval",
+    "name": "gosuperscript/axiom-interval",
     "type": "library",
     "licsense": "proprietary",
     "require": {

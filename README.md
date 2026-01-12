@@ -1,4 +1,4 @@
-# Schema Interval
+# Axiom Interval
 
 A PHP library that extends [gosuperscript/schema](https://github.com/mannum/schema) with support for [Interval](https://github.com/superscript/interval) types, providing type-safe interval handling and operator overloading for schema validation.
 
@@ -22,7 +22,7 @@ A PHP library that extends [gosuperscript/schema](https://github.com/mannum/sche
 Install via Composer:
 
 ```bash
-composer require gosuperscript/schema-interval
+composer require gosuperscript/axiom-interval
 ```
 
 > **Note**: This package uses a custom Composer repository. Make sure your `composer.json` includes:
