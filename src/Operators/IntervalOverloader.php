@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Operators;
+namespace Superscript\Axiom\Interval\Operators;
 
 use Superscript\Interval\Interval;
 use Superscript\Schema\Operators\OperatorOverloader;

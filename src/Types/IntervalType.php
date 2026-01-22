@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Types;
+namespace Superscript\Axiom\Interval\Types;
 
 use Superscript\Interval\Interval;
 use Superscript\Monads\Result\Result;

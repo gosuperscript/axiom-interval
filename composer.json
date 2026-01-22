@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Superscript\\Schema\\Interval\\": "src/"
+            "Superscript\\Axiom\\Interval\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Superscript\\Schema\\Interval\\Tests\\": "tests/"
+            "Superscript\\Axiom\\Interval\\Tests\\": "tests/"
         }
     },
     "scripts": {

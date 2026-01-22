@@ -32,7 +32,7 @@ composer require gosuperscript/axiom-interval
 The `IntervalType` class provides type transformation, comparison, and formatting for interval values:
 
 ```php
-use Superscript\Schema\Interval\Types\IntervalType;
+use Superscript\Axiom\Interval\Types\IntervalType;
 use Superscript\Interval\Interval;
 use Superscript\Interval\IntervalNotation;
 use Brick\Math\BigNumber;
@@ -73,7 +73,7 @@ Intervals can be specified using standard mathematical notation:
 The `IntervalOverloader` class enables comparison operations between intervals and numeric values:
 
 ```php
-use Superscript\Schema\Interval\Operators\IntervalOverloader;
+use Superscript\Axiom\Interval\Operators\IntervalOverloader;
 use Superscript\Interval\Interval;
 
 $overloader = new IntervalOverloader();
