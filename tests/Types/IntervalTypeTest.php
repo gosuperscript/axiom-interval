@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Superscript\Interval\Interval;
 use Superscript\Interval\IntervalNotation;
-use Superscript\Schema\Exceptions\TransformValueException;
+use Superscript\Axiom\Exceptions\TransformValueException;
 use Superscript\Axiom\Interval\Types\IntervalType;
 
 #[CoversClass(IntervalType::class)]

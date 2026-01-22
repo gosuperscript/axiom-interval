@@ -1,6 +1,6 @@
 # Axiom Interval
 
-A PHP library that extends [gosuperscript/schema](https://github.com/mannum/schema) with support for [Interval](https://github.com/superscript/interval) types, providing type-safe interval handling and operator overloading for schema validation.
+A PHP library that extends [gosuperscript/axiom](https://github.com/gosuperscript/axiom) with support for [Interval](https://github.com/superscript/interval) types, providing type-safe interval handling and operator overloading for schema validation.
 
 ## Features
 
@@ -14,7 +14,7 @@ A PHP library that extends [gosuperscript/schema](https://github.com/mannum/sche
 
 - PHP ^8.4
 - ext-intl
-- [gosuperscript/schema](https://github.com/mannum/schema)
+- [gosuperscript/axiom](https://github.com/gosuperscript/axiom)
 - [superscript/interval](https://github.com/superscript/interval) ^1.0.4
 
 ## Installation
@@ -142,4 +142,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Credits
 
 - Built on [superscript/interval](https://github.com/superscript/interval)
-- Extends [gosuperscript/schema](https://github.com/mannum/schema)
+- Extends [gosuperscript/axiom](https://github.com/gosuperscript/axiom)
