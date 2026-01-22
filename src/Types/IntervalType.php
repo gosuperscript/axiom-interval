@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Types;
+namespace Superscript\Axiom\Interval\Types;
 
 use Superscript\Interval\Interval;
 use Superscript\Monads\Result\Result;
-use Superscript\Schema\Exceptions\TransformValueException;
-use Superscript\Schema\Types\Type;
+use Superscript\Axiom\Exceptions\TransformValueException;
+use Superscript\Axiom\Types\Type;
 
 use function Superscript\Monads\Option\Some;
 use function Superscript\Monads\Result\attempt;

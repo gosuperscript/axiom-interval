@@ -1,6 +1,6 @@
 <?php
 
-namespace Superscript\Schema\Interval\Tests\Operators;
+namespace Superscript\Axiom\Interval\Tests\Operators;
 
 use Generator;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Psl\Type\Exception\AssertException;
 use Superscript\Interval\Interval;
-use Superscript\Schema\Interval\Operators\IntervalOverloader;
+use Superscript\Axiom\Interval\Operators\IntervalOverloader;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(IntervalOverloader::class)]

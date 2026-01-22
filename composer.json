@@ -1,12 +1,12 @@
 {
     "name": "gosuperscript/axiom-interval",
-    "description": "A PHP library that extends gosuperscript/schema with support for Interval types, providing type-safe interval handling and operator overloading for schema validation",
+    "description": "A PHP library that extends gosuperscript/axiom with support for Interval types, providing type-safe interval handling and operator overloading for schema validation",
     "type": "library",
     "license": "MIT",
     "require": {
         "php": "^8.4",
         "ext-intl": "*",
-        "gosuperscript/schema": "^0.1.0",
+        "gosuperscript/axiom": "^0.2.0",
         "superscript/interval": "^1.0.4"
     },
     "require-dev": {
@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Superscript\\Schema\\Interval\\": "src/"
+            "Superscript\\Axiom\\Interval\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Superscript\\Schema\\Interval\\Tests\\": "tests/"
+            "Superscript\\Axiom\\Interval\\Tests\\": "tests/"
         }
     },
     "scripts": {

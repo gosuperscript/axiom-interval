@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Operators;
+namespace Superscript\Axiom\Interval\Operators;
 
 use Superscript\Interval\Interval;
-use Superscript\Schema\Operators\OperatorOverloader;
+use Superscript\Axiom\Operators\OperatorOverloader;
 
 use function Psl\Type\float;
 use function Psl\Type\instance_of;

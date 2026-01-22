@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Tests\Types;
+namespace Superscript\Axiom\Interval\Tests\Types;
 
 use Brick\Math\BigNumber;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -11,8 +11,8 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Superscript\Interval\Interval;
 use Superscript\Interval\IntervalNotation;
-use Superscript\Schema\Exceptions\TransformValueException;
-use Superscript\Schema\Interval\Types\IntervalType;
+use Superscript\Axiom\Exceptions\TransformValueException;
+use Superscript\Axiom\Interval\Types\IntervalType;
 
 #[CoversClass(IntervalType::class)]
 class IntervalTypeTest extends TestCase
