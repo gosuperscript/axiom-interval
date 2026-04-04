@@ -6,7 +6,7 @@
     "require": {
         "php": "^8.4",
         "ext-intl": "*",
-        "gosuperscript/axiom": "^0.3.0",
+        "gosuperscript/axiom": "dev-dsl",
         "superscript/interval": "^1.0.4"
     },
     "require-dev": {
