@@ -21,14 +21,6 @@ final readonly class IntervalOverloader implements OperatorOverloader
         return $left instanceof Interval && is_numeric($right) && in_array($operator, ['>', '<', '>=', '<=']);
     }
 
-    /**
-     * Evaluates the comparison between two intervals based on the operator.
-     *
-     * @param  Interval  $left  The left interval.
-     * @param  int|float  $right  The right interval.
-     * @param  string  $operator  The operator to use for comparison.
-     * @return Result<bool, \Throwable>
-     */
     public function evaluate(mixed $left, mixed $right, string $operator): Result
     {
         return attempt(function () use ($left, $right, $operator) {

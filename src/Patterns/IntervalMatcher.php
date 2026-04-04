@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Patterns;
+namespace Superscript\Axiom\Interval\Patterns;
 
 use Brick\Math\BigNumber;
 use Superscript\Axiom\Patterns\PatternMatcher;
 use Superscript\Axiom\Sources\MatchPattern;
 use Superscript\Monads\Result\Result;
-use Superscript\Schema\Interval\Sources\IntervalPattern;
+use Superscript\Axiom\Interval\Sources\IntervalPattern;
 
 use function Superscript\Monads\Result\Ok;
 

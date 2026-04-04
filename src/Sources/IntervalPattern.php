@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Sources;
+namespace Superscript\Axiom\Interval\Sources;
 
 use Superscript\Axiom\Sources\MatchPattern;
 use Superscript\Interval\Interval;

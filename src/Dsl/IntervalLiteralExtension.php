@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Dsl;
+namespace Superscript\Axiom\Interval\Dsl;
 
 use Superscript\Axiom\Dsl\DslLiteralExtension;
 

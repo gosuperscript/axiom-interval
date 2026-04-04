@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Tests\Dsl;
+namespace Superscript\Axiom\Interval\Tests\Dsl;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Superscript\Axiom\Dsl\DslLiteralExtension;
-use Superscript\Schema\Interval\Dsl\IntervalLiteralExtension;
+use Superscript\Axiom\Interval\Dsl\IntervalLiteralExtension;
 
 #[CoversClass(IntervalLiteralExtension::class)]
 class IntervalLiteralExtensionTest extends TestCase

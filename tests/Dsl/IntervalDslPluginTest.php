@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Tests\Dsl;
+namespace Superscript\Axiom\Interval\Tests\Dsl;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
@@ -11,11 +11,11 @@ use PHPUnit\Framework\TestCase;
 use Superscript\Axiom\Dsl\FunctionRegistry;
 use Superscript\Axiom\Dsl\OperatorRegistry;
 use Superscript\Axiom\Dsl\TypeRegistry;
-use Superscript\Schema\Interval\Dsl\IntervalDslPlugin;
-use Superscript\Schema\Interval\Dsl\IntervalLiteralExtension;
-use Superscript\Schema\Interval\Operators\IntervalOverloader;
-use Superscript\Schema\Interval\Patterns\IntervalMatcher;
-use Superscript\Schema\Interval\Types\IntervalType;
+use Superscript\Axiom\Interval\Dsl\IntervalDslPlugin;
+use Superscript\Axiom\Interval\Dsl\IntervalLiteralExtension;
+use Superscript\Axiom\Interval\Operators\IntervalOverloader;
+use Superscript\Axiom\Interval\Patterns\IntervalMatcher;
+use Superscript\Axiom\Interval\Types\IntervalType;
 
 #[CoversClass(IntervalDslPlugin::class)]
 #[UsesClass(IntervalMatcher::class)]

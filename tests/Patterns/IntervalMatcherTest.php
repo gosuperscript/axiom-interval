@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Tests\Patterns;
+namespace Superscript\Axiom\Interval\Tests\Patterns;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -11,8 +11,8 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Superscript\Axiom\Sources\MatchPattern;
 use Superscript\Interval\Interval;
-use Superscript\Schema\Interval\Patterns\IntervalMatcher;
-use Superscript\Schema\Interval\Sources\IntervalPattern;
+use Superscript\Axiom\Interval\Patterns\IntervalMatcher;
+use Superscript\Axiom\Interval\Sources\IntervalPattern;
 
 #[CoversClass(IntervalMatcher::class)]
 #[UsesClass(IntervalPattern::class)]

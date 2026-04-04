@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Superscript\Axiom\Interval\Tests\Operators;
 
 use Generator;
@@ -40,6 +42,7 @@ class IntervalOverloaderTest extends TestCase
         $interval = Interval::fromString('[2, 3]');
         $overloader = new IntervalOverloader();
         $result = $overloader->evaluate(left: $interval, right: 2, operator: '==');
+
         $this->assertTrue($result->isErr());
         $this->assertInstanceOf(\InvalidArgumentException::class, $result->unwrapErr());
         $this->assertSame('Unsupported operator: ==', $result->unwrapErr()->getMessage());
@@ -51,6 +54,7 @@ class IntervalOverloaderTest extends TestCase
         $overloader = new IntervalOverloader();
         $this->assertFalse($overloader->supportsOverloading(left: 'invalid', right: 2, operator: '>'));
         $result = $overloader->evaluate(left: 'invalid', right: 2, operator: '>');
+
         $this->assertTrue($result->isErr());
         $this->assertInstanceOf(AssertException::class, $result->unwrapErr());
         $this->assertStringContainsString('Expected "Superscript\Interval\Interval", got "string"', $result->unwrapErr()->getMessage());
@@ -63,6 +67,7 @@ class IntervalOverloaderTest extends TestCase
         $overloader = new IntervalOverloader();
         $this->assertFalse($overloader->supportsOverloading(left: $interval, right: 'invalid', operator: '>'));
         $result = $overloader->evaluate(left: $interval, right: 'invalid', operator: '>');
+
         $this->assertTrue($result->isErr());
         $this->assertInstanceOf(AssertException::class, $result->unwrapErr());
         $this->assertStringContainsString('Expected "float|int", got "string"', $result->unwrapErr()->getMessage());
@@ -75,6 +80,7 @@ class IntervalOverloaderTest extends TestCase
         $overloader = new IntervalOverloader();
         $this->assertFalse($overloader->supportsOverloading(left: $interval, right: 2, operator: '!='));
         $result = $overloader->evaluate(left: $interval, right: 2, operator: '!=');
+
         $this->assertTrue($result->isErr());
         $this->assertInstanceOf(\InvalidArgumentException::class, $result->unwrapErr());
         $this->assertSame('Unsupported operator: !=', $result->unwrapErr()->getMessage());

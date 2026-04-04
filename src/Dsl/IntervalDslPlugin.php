@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Dsl;
+namespace Superscript\Axiom\Interval\Dsl;
 
 use Superscript\Axiom\Dsl\Associativity;
 use Superscript\Axiom\Dsl\DslLiteralExtension;
@@ -12,9 +12,9 @@ use Superscript\Axiom\Dsl\OperatorRegistry;
 use Superscript\Axiom\Dsl\TypeRegistry;
 use Superscript\Axiom\Operators\OperatorOverloader;
 use Superscript\Axiom\Patterns\PatternMatcher;
-use Superscript\Schema\Interval\Operators\IntervalOverloader;
-use Superscript\Schema\Interval\Patterns\IntervalMatcher;
-use Superscript\Schema\Interval\Types\IntervalType;
+use Superscript\Axiom\Interval\Operators\IntervalOverloader;
+use Superscript\Axiom\Interval\Patterns\IntervalMatcher;
+use Superscript\Axiom\Interval\Types\IntervalType;
 
 final class IntervalDslPlugin implements DslPlugin
 {

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Superscript\Schema\Interval\Tests\Sources;
+namespace Superscript\Axiom\Interval\Tests\Sources;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Superscript\Axiom\Sources\MatchPattern;
 use Superscript\Interval\Interval;
-use Superscript\Schema\Interval\Sources\IntervalPattern;
+use Superscript\Axiom\Interval\Sources\IntervalPattern;
 
 #[CoversClass(IntervalPattern::class)]
 class IntervalPatternTest extends TestCase
