@@ -26,8 +26,8 @@ final readonly class IntervalType implements Type
             is_string($value) => attempt(fn () => Interval::fromString($value)),
             default => Err(new \UnhandledMatchError()),
         })
-            ->map(fn(Interval $interval) => Some($interval))
-            ->mapErr(fn() => new TransformValueException(type: 'interval', value: $value));
+            ->map(fn (Interval $interval) => Some($interval))
+            ->mapErr(fn () => new TransformValueException(type: 'interval', value: $value));
     }
 
     public function assert(mixed $value): Result

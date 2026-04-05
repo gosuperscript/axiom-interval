@@ -19,7 +19,7 @@ class IntervalTypeTest extends TestCase
 {
     #[DataProvider('coerceProvider')]
     #[Test]
-    public function it_can_coerce_a_value(mixed $value, Interval $expected)
+    public function it_can_coerce_a_value(mixed $value, Interval $expected): void
     {
         $type = new IntervalType();
         $this->assertTrue($type->coerce($value)->unwrap()->unwrap()->isEqualTo($expected));
@@ -28,8 +28,8 @@ class IntervalTypeTest extends TestCase
     public static function coerceProvider(): array
     {
         return [
-            [new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed), new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed)],
-            ['[1,2]', new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed)],
+            'from interval' => [new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed), new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed)],
+            'from string' => ['[1,2]', new Interval(BigNumber::of(1), BigNumber::of(2), IntervalNotation::Closed)],
         ];
     }
 
@@ -53,11 +53,10 @@ class IntervalTypeTest extends TestCase
 
     #[DataProvider('assertProvider')]
     #[Test]
-    public function it_can_assert_a_value(mixed $value, bool $shouldPass)
+    public function it_can_assert_a_value(mixed $value, bool $shouldPass): void
     {
         $type = new IntervalType();
-        $result = $type->assert($value);
-        $this->assertSame($shouldPass, $result->isOk());
+        $this->assertSame($shouldPass, $type->assert($value)->isOk());
     }
 
     public static function assertProvider(): array
