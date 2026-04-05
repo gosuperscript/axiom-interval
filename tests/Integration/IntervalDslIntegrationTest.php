@@ -9,165 +9,121 @@ use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
+use Superscript\Axiom\Dsl\AxiomDsl;
+use Superscript\Axiom\Dsl\CoreDslPlugin;
+use Superscript\Axiom\Interval\Dsl\IntervalDslPlugin;
 use Superscript\Axiom\Interval\Operators\IntervalOverloader;
-use Superscript\Axiom\Interval\Patterns\IntervalMatcher;
-use Superscript\Axiom\Interval\Sources\IntervalPattern;
-use Superscript\Axiom\Interval\Types\IntervalType;
+use Superscript\Axiom\Operators\DefaultOverloader;
 use Superscript\Axiom\Operators\OperatorOverloader;
-use Superscript\Axiom\Patterns\LiteralMatcher;
-use Superscript\Axiom\Patterns\WildcardMatcher;
+use Superscript\Axiom\Operators\OverloaderManager;
 use Superscript\Axiom\Resolvers\DelegatingResolver;
 use Superscript\Axiom\Resolvers\InfixResolver;
-use Superscript\Axiom\Resolvers\MatchResolver;
 use Superscript\Axiom\Resolvers\StaticResolver;
 use Superscript\Axiom\Resolvers\SymbolResolver;
+use Superscript\Axiom\Resolvers\UnaryResolver;
 use Superscript\Axiom\Resolvers\ValueResolver;
 use Superscript\Axiom\Sources\InfixExpression;
-use Superscript\Axiom\Sources\MatchArm;
-use Superscript\Axiom\Sources\MatchExpression;
 use Superscript\Axiom\Sources\StaticSource;
 use Superscript\Axiom\Sources\SymbolSource;
 use Superscript\Axiom\Sources\TypeDefinition;
-use Superscript\Axiom\Sources\WildcardPattern;
+use Superscript\Axiom\Sources\UnaryExpression;
 use Superscript\Axiom\SymbolRegistry;
 use Superscript\Interval\Interval;
 
 #[CoversNothing]
 class IntervalDslIntegrationTest extends TestCase
 {
-    private DelegatingResolver $resolver;
+    private AxiomDsl $dsl;
 
     protected function setUp(): void
     {
-        $this->resolver = new DelegatingResolver([
+        $this->dsl = AxiomDsl::fromPlugins(
+            new CoreDslPlugin(),
+            new IntervalDslPlugin(),
+        );
+    }
+
+    private function resolve(string $source, string $symbol): mixed
+    {
+        $compilation = $this->dsl->evaluate($source);
+
+        $resolver = new DelegatingResolver([
             StaticSource::class => StaticResolver::class,
             InfixExpression::class => InfixResolver::class,
             TypeDefinition::class => ValueResolver::class,
             SymbolSource::class => SymbolResolver::class,
-            MatchExpression::class => MatchResolver::class,
+            UnaryExpression::class => UnaryResolver::class,
         ]);
 
-        $this->resolver->instance(OperatorOverloader::class, new IntervalOverloader());
-        $this->resolver->instance(SymbolRegistry::class, new SymbolRegistry());
+        $resolver->instance(OperatorOverloader::class, new OverloaderManager([
+            new IntervalOverloader(),
+            new DefaultOverloader(),
+        ]));
+        $resolver->instance(SymbolRegistry::class, $compilation->symbols);
+
+        return $resolver->resolve(new SymbolSource($symbol))->unwrap()->unwrap();
     }
 
     #[Test]
-    public function it_coerces_string_to_interval_through_resolver(): void
+    public function it_coerces_string_to_interval(): void
     {
-        $source = new TypeDefinition(
-            type: new IntervalType(),
-            source: new StaticSource('[1,5]'),
-        );
-
-        $result = $this->resolver->resolve($source)->unwrap()->unwrap();
+        $result = $this->resolve('range: interval = "[1,5]"', 'range');
 
         $this->assertInstanceOf(Interval::class, $result);
+        $this->assertTrue($result->isEqualTo(Interval::fromString('[1,5]')));
     }
 
     #[Test]
-    #[DataProvider('intervalComparisonProvider')]
-    public function it_compares_interval_to_number(string $intervalStr, string $operator, int|float $right, bool $expected): void
+    #[DataProvider('comparisonProvider')]
+    public function it_compares_interval_to_number(string $dsl, bool $expected): void
     {
-        $this->resolver->instance(SymbolRegistry::class, new SymbolRegistry([
-            'value' => new StaticSource(Interval::fromString($intervalStr)),
-        ]));
+        $source = <<<AXIOM
+        range: interval = "[2,3]"
+        result: bool = {$dsl}
+        AXIOM;
 
-        $source = new InfixExpression(
-            left: new SymbolSource('value'),
-            operator: $operator,
-            right: new StaticSource($right),
-        );
-
-        $result = $this->resolver->resolve($source)->unwrap()->unwrap();
-
-        $this->assertSame($expected, $result);
+        $this->assertSame($expected, $this->resolve($source, 'result'));
     }
 
-    public static function intervalComparisonProvider(): Generator
+    public static function comparisonProvider(): Generator
     {
-        yield '[2,3] > 1 is true' => ['[2,3]', '>', 1, true];
-        yield '[2,3] < 4 is true' => ['[2,3]', '<', 4, true];
-        yield '[2,3] >= 2 is true' => ['[2,3]', '>=', 2, true];
-        yield '[2,3] <= 3 is true' => ['[2,3]', '<=', 3, true];
-        yield '[2,3] > 3 is false' => ['[2,3]', '>', 3, false];
+        yield 'greater than (true)' => ['range > 1', true];
+        yield 'less than (true)' => ['range < 4', true];
+        yield 'greater than or equal (true)' => ['range >= 2', true];
+        yield 'less than or equal (true)' => ['range <= 3', true];
+        yield 'greater than (false)' => ['range > 3', false];
     }
 
     #[Test]
-    public function it_matches_number_against_interval_pattern(): void
+    public function it_uses_interval_in_conditional(): void
     {
-        $this->resolver->instance(MatchResolver::class, new MatchResolver(
-            resolver: $this->resolver,
-            matchers: [
-                new IntervalMatcher(),
-                new WildcardMatcher(),
-                new LiteralMatcher(),
-            ],
-        ));
+        $source = <<<'AXIOM'
+        range: interval = "[2,3]"
+        factor: number = if range > 1 then 1.5 else 1.0
+        AXIOM;
 
-        $source = new MatchExpression(
-            subject: new StaticSource(2.5),
-            arms: [
-                new MatchArm(
-                    pattern: new IntervalPattern(Interval::fromString('[1,3]')),
-                    expression: new StaticSource('in range'),
-                ),
-                new MatchArm(
-                    pattern: new WildcardPattern(),
-                    expression: new StaticSource('out of range'),
-                ),
-            ],
-        );
-
-        $result = $this->resolver->resolve($source)->unwrap()->unwrap();
-
-        $this->assertSame('in range', $result);
+        $this->assertSame(1.5, $this->resolve($source, 'factor'));
     }
 
     #[Test]
-    public function it_falls_through_to_wildcard_when_not_in_interval(): void
+    public function it_uses_interval_in_else_branch(): void
     {
-        $this->resolver->instance(MatchResolver::class, new MatchResolver(
-            resolver: $this->resolver,
-            matchers: [
-                new IntervalMatcher(),
-                new WildcardMatcher(),
-                new LiteralMatcher(),
-            ],
-        ));
+        $source = <<<'AXIOM'
+        range: interval = "[2,3]"
+        factor: number = if range > 10 then 1.5 else 1.0
+        AXIOM;
 
-        $source = new MatchExpression(
-            subject: new StaticSource(5),
-            arms: [
-                new MatchArm(
-                    pattern: new IntervalPattern(Interval::fromString('[1,3]')),
-                    expression: new StaticSource('in range'),
-                ),
-                new MatchArm(
-                    pattern: new WildcardPattern(),
-                    expression: new StaticSource('out of range'),
-                ),
-            ],
-        );
-
-        $result = $this->resolver->resolve($source)->unwrap()->unwrap();
-
-        $this->assertSame('out of range', $result);
+        $this->assertSame(1.0, $this->resolve($source, 'factor'));
     }
 
     #[Test]
-    public function it_coerces_and_compares_in_single_expression(): void
+    public function it_combines_interval_comparison_with_boolean_logic(): void
     {
-        $source = new InfixExpression(
-            left: new TypeDefinition(
-                type: new IntervalType(),
-                source: new StaticSource('[10,20]'),
-            ),
-            operator: '>',
-            right: new StaticSource(5),
-        );
+        $source = <<<'AXIOM'
+        range: interval = "[2,3]"
+        in_bounds: bool = range >= 1 && range <= 5
+        AXIOM;
 
-        $result = $this->resolver->resolve($source)->unwrap()->unwrap();
-
-        $this->assertSame(true, $result);
+        $this->assertSame(true, $this->resolve($source, 'in_bounds'));
     }
 }

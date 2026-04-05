@@ -12,14 +12,12 @@ use Superscript\Axiom\Dsl\FunctionRegistry;
 use Superscript\Axiom\Dsl\OperatorRegistry;
 use Superscript\Axiom\Dsl\TypeRegistry;
 use Superscript\Axiom\Interval\Dsl\IntervalDslPlugin;
-use Superscript\Axiom\Interval\Dsl\IntervalLiteralExtension;
 use Superscript\Axiom\Interval\Operators\IntervalOverloader;
 use Superscript\Axiom\Interval\Patterns\IntervalMatcher;
 use Superscript\Axiom\Interval\Types\IntervalType;
 
 #[CoversClass(IntervalDslPlugin::class)]
 #[UsesClass(IntervalMatcher::class)]
-#[UsesClass(IntervalLiteralExtension::class)]
 class IntervalDslPluginTest extends TestCase
 {
     #[Test]
@@ -67,12 +65,11 @@ class IntervalDslPluginTest extends TestCase
     }
 
     #[Test]
-    public function it_provides_literal_extensions(): void
+    public function it_has_no_literal_extensions(): void
     {
         $plugin = new IntervalDslPlugin();
 
-        $this->assertCount(1, $plugin->literals());
-        $this->assertInstanceOf(IntervalLiteralExtension::class, $plugin->literals()[0]);
+        $this->assertEmpty($plugin->literals());
     }
 
     #[Test]

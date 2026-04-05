@@ -39,7 +39,7 @@ final class IntervalDslPlugin implements DslPlugin
     /** @return list<DslLiteralExtension> */
     public function literals(): array
     {
-        return [new IntervalLiteralExtension()];
+        return [];
     }
 
     /** @return list<OperatorOverloader> */
