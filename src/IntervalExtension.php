@@ -43,25 +43,25 @@ final class IntervalExtension extends Extension
         $boolean = new BooleanType();
 
         return [
-            Operator::infix('<')->signature($interval, $number)->returns($boolean)
-                ->evaluate(fn(Interval $left, int|float $right) => $left->isLessThan($right)),
-            Operator::infix('<=')->signature($interval, $number)->returns($boolean)
-                ->evaluate(fn(Interval $left, int|float $right) => $left->isLessThanOrEqualTo($right)),
-            Operator::infix('>')->signature($interval, $number)->returns($boolean)
-                ->evaluate(fn(Interval $left, int|float $right) => $left->isGreaterThan($right)),
-            Operator::infix('>=')->signature($interval, $number)->returns($boolean)
-                ->evaluate(fn(Interval $left, int|float $right) => $left->isGreaterThanOrEqualTo($right)),
+            Operator::infix('<')->takes($interval, $number)->returns($boolean)
+                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isLessThan($right)),
+            Operator::infix('<=')->takes($interval, $number)->returns($boolean)
+                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isLessThanOrEqualTo($right)),
+            Operator::infix('>')->takes($interval, $number)->returns($boolean)
+                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isGreaterThan($right)),
+            Operator::infix('>=')->takes($interval, $number)->returns($boolean)
+                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isGreaterThanOrEqualTo($right)),
 
-            Operator::infix('=')->signature($interval, $interval)->returns($boolean)
-                ->evaluate(fn(Interval $left, Interval $right) => $left->isEqualTo($right)),
-            Operator::infix('==')->signature($interval, $interval)->returns($boolean)
-                ->evaluate(fn(Interval $left, Interval $right) => $left->isEqualTo($right)),
-            Operator::infix('===')->signature($interval, $interval)->returns($boolean)
-                ->evaluate(fn(Interval $left, Interval $right) => $left->isEqualTo($right)),
-            Operator::infix('!=')->signature($interval, $interval)->returns($boolean)
-                ->evaluate(fn(Interval $left, Interval $right) => !$left->isEqualTo($right)),
-            Operator::infix('!==')->signature($interval, $interval)->returns($boolean)
-                ->evaluate(fn(Interval $left, Interval $right) => !$left->isEqualTo($right)),
+            Operator::infix('=')->takes($interval, $interval)->returns($boolean)
+                ->evaluatesWith(fn(Interval $left, Interval $right) => $left->isEqualTo($right)),
+            Operator::infix('==')->takes($interval, $interval)->returns($boolean)
+                ->evaluatesWith(fn(Interval $left, Interval $right) => $left->isEqualTo($right)),
+            Operator::infix('===')->takes($interval, $interval)->returns($boolean)
+                ->evaluatesWith(fn(Interval $left, Interval $right) => $left->isEqualTo($right)),
+            Operator::infix('!=')->takes($interval, $interval)->returns($boolean)
+                ->evaluatesWith(fn(Interval $left, Interval $right) => !$left->isEqualTo($right)),
+            Operator::infix('!==')->takes($interval, $interval)->returns($boolean)
+                ->evaluatesWith(fn(Interval $left, Interval $right) => !$left->isEqualTo($right)),
         ];
     }
 
