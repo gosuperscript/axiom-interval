@@ -1,14 +1,13 @@
 # Axiom Interval
 
-A PHP library that extends [gosuperscript/axiom](https://github.com/gosuperscript/axiom) with support for [Interval](https://github.com/superscript/interval) types, providing type-safe interval handling and operator overloading for schema validation.
+A PHP library that extends [gosuperscript/axiom](https://github.com/gosuperscript/axiom) with support for [Interval](https://github.com/superscript/interval) types: a `Type` that validates and coerces intervals, and an `Extension` that teaches the compiler to compare them.
 
 ## Features
 
-- **Interval Type**: Transform and validate interval values in your schemas
-- **Operator Overloading**: Compare intervals with numeric values using standard comparison operators (`>`, `<`, `>=`, `<=`)
+- **Interval Type**: Validate and coerce interval values at a program's boundary
+- **Operator rules**: Compare an interval against a number (`>`, `<`, `>=`, `<=`) and two intervals for equality (`==`, `!=`), resolved and type-checked at compile time
 - **Type Safety**: Built with PHP 8.4+ strict types
 - **Format Support**: Parse intervals from string notation (e.g., `[1,2]`, `(1,2)`)
-- **Comparison**: Compare intervals for equality
 
 ## Requirements
 
@@ -27,74 +26,64 @@ composer require gosuperscript/axiom-interval
 
 ## Usage
 
-### Interval Type
+### The interval type
 
-The `IntervalType` class provides type transformation, comparison, and formatting for interval values:
+`IntervalType` is an Axiom `Type`: it coerces and asserts interval values, formats them, and projects into the shape algebra as an opaque `interval` identity.
 
 ```php
 use Superscript\Axiom\Interval\Types\IntervalType;
-use Superscript\Interval\Interval;
-use Superscript\Interval\IntervalNotation;
-use Brick\Math\BigNumber;
 
 $type = new IntervalType();
 
-// Transform from string
-$result = $type->transform('[1,2]');
-$interval = $result->unwrap()->unwrap();
+// Coerce from a string or an Interval object
+$interval = $type->coerce('[1,2]')->unwrap()->unwrap();
 
-// Transform from Interval object
-$interval = new Interval(
-    BigNumber::of(1),
-    BigNumber::of(2),
-    IntervalNotation::Closed
-);
-$result = $type->transform($interval);
+// Assert an existing Interval object (strict membership)
+$type->assert($interval)->isOk(); // true
 
-// Compare two intervals
-$a = $type->transform('[1,2]')->unwrap()->unwrap();
-$b = $type->transform('[1,2]')->unwrap()->unwrap();
-$isEqual = $type->compare($a, $b); // true
-
-// Format interval back to string
-$formatted = $type->format($interval); // "[1,2]"
+// Format back to string notation
+$type->format($interval); // "[1,2]"
 ```
 
-#### Interval Notation
+#### Interval notation
 
-Intervals can be specified using standard mathematical notation:
-- `[1,2]` - Closed interval (includes both endpoints)
-- `(1,2)` - Open interval (excludes both endpoints)
-- `[1,2)` - Half-open interval (includes left, excludes right)
-- `(1,2]` - Half-open interval (excludes left, includes right)
+- `[1,2]` — Closed interval (includes both endpoints)
+- `(1,2)` — Open interval (excludes both endpoints)
+- `[1,2)` — Half-open (includes left, excludes right)
+- `(1,2]` — Half-open (excludes left, includes right)
 
-### Operator Overloading
+### The extension
 
-The `IntervalOverloader` class enables comparison operations between intervals and numeric values:
+`IntervalExtension` contributes the interval's operator rules and its literal registration. Compose it onto the core dialect and hand the dialect to an expression; the compiler resolves and type-checks every operator against it, and the compiled `Program` runs what it resolved — no runtime dispatch.
 
 ```php
-use Superscript\Axiom\Interval\Operators\IntervalOverloader;
-use Superscript\Interval\Interval;
+use Superscript\Axiom\Dialect;
+use Superscript\Axiom\Expression;
+use Superscript\Axiom\Interval\IntervalExtension;
+use Superscript\Axiom\Interval\Types\IntervalType;
+use Superscript\Axiom\Sources\InfixExpression;
+use Superscript\Axiom\Sources\StaticSource;
+use Superscript\Axiom\Sources\SymbolSource;
 
-$overloader = new IntervalOverloader();
-$interval = Interval::fromString('[2,3]');
+$dialect = Dialect::core()->with(new IntervalExtension());
 
-// Check if operator is supported
-$supports = $overloader->supportsOverloading($interval, 1, '>'); // true
+$expression = new Expression(
+    new InfixExpression(new SymbolSource('range'), '>', new StaticSource(1)),
+    dialect: $dialect,
+    declarations: ['range' => new IntervalType()],
+);
 
-// Evaluate comparisons
-$overloader->evaluate($interval, 1, '>');   // true (interval is greater than 1)
-$overloader->evaluate($interval, 2, '>=');  // true (interval is >= 2)
-$overloader->evaluate($interval, 3, '<=');  // true (interval is <= 3)
-$overloader->evaluate($interval, 4, '<');   // true (interval is less than 4)
+$program = $expression->compile()->unwrap();
+
+$program(['range' => '[2,3]'])->unwrap()->unwrap(); // true — [2,3] lies above 1
 ```
 
-#### Supported Operators
+#### Supported operations
 
-- `>` - Greater than
-- `>=` - Greater than or equal to
-- `<` - Less than
-- `<=` - Less than or equal to
+- **Ordering against a number** — `interval > number`, `>=`, `<`, `<=` → boolean. The interval is the left operand.
+- **Equality against another interval** — `interval == interval`, `!=` (and the `=`/`===`/`!==` aliases) → boolean. Core refuses equality on opaque operands, so the interval package owns its own.
+
+Operand types that no rule accepts — `interval == number`, `interval + interval` — are refused at compile time with a named diagnostic, never at runtime.
 
 ## Development
 
@@ -106,7 +95,7 @@ Run the full test suite:
 composer test
 ```
 
-Or run individual test suites:
+Or run individual suites:
 
 ```bash
 # Type checking with PHPStan
@@ -125,14 +114,6 @@ This project uses [Laravel Pint](https://laravel.com/docs/pint) for code formatt
 
 ```bash
 vendor/bin/pint
-```
-
-### Docker Support
-
-The project includes Docker configuration for development:
-
-```bash
-docker-compose up -d
 ```
 
 ## License

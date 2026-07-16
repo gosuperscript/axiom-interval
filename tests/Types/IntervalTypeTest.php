@@ -13,6 +13,7 @@ use Superscript\Interval\Interval;
 use Superscript\Interval\IntervalNotation;
 use Superscript\Axiom\Exceptions\TransformValueException;
 use Superscript\Axiom\Interval\Types\IntervalType;
+use Superscript\Axiom\Types\Shapes\OpaqueShape;
 
 #[CoversClass(IntervalType::class)]
 class IntervalTypeTest extends TestCase
@@ -69,23 +70,10 @@ class IntervalTypeTest extends TestCase
         ];
     }
 
-    #[DataProvider('compareProvider')]
     #[Test]
-    public function it_can_compare_two_values(string $a, string $b, bool $expected): void
+    public function it_projects_to_an_opaque_interval_shape(): void
     {
-        $type = new IntervalType();
-        $a = $type->coerce($a)->unwrap()->unwrap();
-        $b = $type->coerce($b)->unwrap()->unwrap();
-        $this->assertSame($expected, $type->compare($a, $b));
-    }
-
-    public static function compareProvider(): array
-    {
-        return [
-            ['[1,2]', '[1,2]', true],
-            ['(1,2)', '(1,2)', true],
-            ['[1,2]', '(1,2)', false],
-        ];
+        $this->assertEquals(new OpaqueShape('interval'), (new IntervalType())->shape());
     }
 
     #[DataProvider('formatProvider')]
