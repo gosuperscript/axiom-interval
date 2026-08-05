@@ -92,4 +92,12 @@ class IntervalTypeTest extends TestCase
             ['(1,2)', '(1,2)'],
         ];
     }
+
+    #[Test]
+    public function it_refuses_to_format_a_value_that_is_not_an_interval(): void
+    {
+        $this->expectException(TransformValueException::class);
+
+        (new IntervalType())->format('[1,2]');
+    }
 }

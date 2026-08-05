@@ -44,13 +44,13 @@ final class IntervalExtension extends Extension
 
         return [
             Operator::infix('<')->takes($interval, $number)->returns($boolean)
-                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isLessThan($right)),
+                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isLessThan(self::exact($right))),
             Operator::infix('<=')->takes($interval, $number)->returns($boolean)
-                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isLessThanOrEqualTo($right)),
+                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isLessThanOrEqualTo(self::exact($right))),
             Operator::infix('>')->takes($interval, $number)->returns($boolean)
-                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isGreaterThan($right)),
+                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isGreaterThan(self::exact($right))),
             Operator::infix('>=')->takes($interval, $number)->returns($boolean)
-                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isGreaterThanOrEqualTo($right)),
+                ->evaluatesWith(fn(Interval $left, int|float $right) => $left->isGreaterThanOrEqualTo(self::exact($right))),
 
             Operator::infix('=')->takes($interval, $interval)->returns($boolean)
                 ->evaluatesWith(fn(Interval $left, Interval $right) => $left->isEqualTo($right)),
@@ -71,5 +71,18 @@ final class IntervalExtension extends Extension
     public function literals(): array
     {
         return [Interval::class => fn() => new IntervalType()];
+    }
+
+    /**
+     * Renders a host scalar in the form an interval bound can be compared against.
+     *
+     * brick rejects floats throughout its arithmetic, because a binary float carries no exact
+     * decimal value to compare with: the literal 0.1 is not one tenth. Casting to string yields the
+     * shortest decimal that round-trips to the same float, which is the number the host's source
+     * text denoted. Ints are already exact.
+     */
+    private static function exact(int|float $value): string|int
+    {
+        return is_float($value) ? (string) $value : $value;
     }
 }

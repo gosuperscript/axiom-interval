@@ -64,6 +64,8 @@ class IntervalExtensionTest extends TestCase
         yield '[2,3] < 2'  => ['[2,3]', '<', 2, false];
         yield '[2,3] < 4'  => ['[2,3]', '<', 4, true];
         yield '[2,3] <= 3' => ['[2,3]', '<=', 3, true];
+        yield '[2,3] > 1.5' => ['[2,3]', '>', 1.5, true];
+        yield '[2,3] < 3.5' => ['[2,3]', '<', 3.5, true];
     }
 
     #[Test]
