@@ -66,6 +66,14 @@ class IntervalExtensionTest extends TestCase
         yield '[2,3] <= 3' => ['[2,3]', '<=', 3, true];
         yield '[2,3] > 1.5' => ['[2,3]', '>', 1.5, true];
         yield '[2,3] < 3.5' => ['[2,3]', '<', 3.5, true];
+        // Past 14 significant digits a (string) cast reads 123456789012345.67 as
+        // 1.2345678901235E+14 — 123456789012350 — which lands above this bound and flips the answer.
+        yield 'a bound between the float and its truncation' => [
+            '[123456789012346,123456789012400]',
+            '>',
+            123456789012345.67,
+            true,
+        ];
     }
 
     #[Test]

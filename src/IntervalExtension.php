@@ -77,12 +77,20 @@ final class IntervalExtension extends Extension
      * Renders a host scalar in the form an interval bound can be compared against.
      *
      * brick rejects floats throughout its arithmetic, because a binary float carries no exact
-     * decimal value to compare with: the literal 0.1 is not one tenth. Casting to string yields the
-     * shortest decimal that round-trips to the same float, which is the number the host's source
-     * text denoted. Ints are already exact.
+     * decimal value to compare with: the literal 0.1 is not one tenth. A float is therefore spelled
+     * as the shortest decimal that round-trips back to it, so the comparison sees the number the
+     * host actually holds.
+     *
+     * That spelling is `json_encode`'s, because it honours `serialize_precision` (-1). A `(string)`
+     * cast honours `precision` instead — 14 significant digits by default — so it truncates and can
+     * emit exponent notation: `(string) 123456789012345.67` gives `1.2345678901235E+14`, which sits
+     * on the wrong side of a bound between the two. Ints are already exact.
+     *
+     * A non-finite float names no decimal at all; JSON_THROW_ON_ERROR refuses it rather than let a
+     * meaningless bound through.
      */
     private static function exact(int|float $value): string|int
     {
-        return is_float($value) ? (string) $value : $value;
+        return is_float($value) ? json_encode($value, JSON_THROW_ON_ERROR) : $value;
     }
 }
