@@ -41,6 +41,10 @@ final readonly class IntervalType implements Type
 
     public function format(mixed $value): string
     {
+        if (! $value instanceof Interval) {
+            throw new TransformValueException(type: 'interval', value: $value);
+        }
+
         return (string) $value;
     }
 
