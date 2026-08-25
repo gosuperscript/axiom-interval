@@ -88,8 +88,13 @@ class IntervalTypeTest extends TestCase
     public static function formatProvider(): array
     {
         return [
-            ['[1,2]', '[1,2]'],
-            ['(1,2)', '(1,2)'],
+            'a bounded interval reads as a range' => ['[1,2]', '1 – 2'],
+            'endpoint openness is not shown' => ['(1,2)', '1 – 2'],
+            'thousands are grouped' => ['[50000,100000)', '50,000 – 100,000'],
+            'decimals are kept as written' => ['[1.2345,2]', '1.2345 – 2'],
+            'a missing right endpoint reads as a floor' => ['[5,)', '5 or more'],
+            'a missing left endpoint reads as a ceiling' => ['(,1000]', 'up to 1,000'],
+            'an interval bounded on neither side reads as any value' => ['(,)', 'any'],
         ];
     }
 
