@@ -8,6 +8,7 @@ use Brick\Math\BigNumber;
 use Superscript\Interval\Interval;
 use Superscript\Monads\Result\Result;
 use Superscript\Axiom\Exceptions\TransformValueException;
+use Superscript\Axiom\Types\HasValueIdentity;
 use Superscript\Axiom\Types\Shapes\OpaqueShape;
 use Superscript\Axiom\Types\Shapes\Shape;
 use Superscript\Axiom\Types\Type;
@@ -21,7 +22,7 @@ use function Superscript\Monads\Result\Ok;
 /**
  * @implements Type<Interval>
  */
-final readonly class IntervalType implements Type
+final readonly class IntervalType implements Type, HasValueIdentity
 {
     public function coerce(mixed $value): Result
     {
@@ -85,8 +86,26 @@ final readonly class IntervalType implements Type
     }
 
     /**
-     * An interval is an object-valued domain type: nominal identity, no
-     * structural fields for member access to reach. It relates only to
+     * Agrees with {@see Interval::isEqualTo}: bounds compare as numbers, so
+     * [1,2] and [1.0,2.00] key alike, and the notation's openness counts.
+     */
+    public function identityKey(mixed $value): string
+    {
+        if (! $value instanceof Interval) {
+            throw new TransformValueException(type: 'interval', value: $value);
+        }
+
+        return sprintf(
+            '%s%s,%s%s',
+            $value->notation->openingSymbol(),
+            $value->left->toBigRational(),
+            $value->right->toBigRational(),
+            $value->notation->closingSymbol(),
+        );
+    }
+
+    /**
+     * An interval is an object-valued domain type: no structural fields for member access to reach. It relates only to
      * other intervals, and the operations it supports — ordering against a
      * number, equality against another interval — are contributed as
      * operator rules ({@see \Superscript\Axiom\Interval\IntervalExtension}),

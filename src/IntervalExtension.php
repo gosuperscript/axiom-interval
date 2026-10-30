@@ -9,6 +9,7 @@ use Superscript\Axiom\Extension;
 use Superscript\Axiom\Interval\Types\IntervalType;
 use Superscript\Axiom\Operators\Operator;
 use Superscript\Axiom\Types\BooleanType;
+use Superscript\Axiom\Types\IdentityLiteralType;
 use Superscript\Axiom\Types\NumberType;
 use Superscript\Axiom\Types\Type;
 
@@ -33,6 +34,10 @@ use Superscript\Axiom\Types\Type;
  *   package that owns the type — so the aliases are declared here, the
  *   negated ones carrying the negation in their evaluation, just as core
  *   does for its own equality aliases.
+ *
+ * An interval literal is typed as itself, not as any interval, so an
+ * equality between two bands that can never be equal is refused at compile
+ * time: `band == [1,5]` where `band` is one of `[5,10]` or `[10,20]`.
  */
 final class IntervalExtension extends Extension
 {
@@ -70,7 +75,7 @@ final class IntervalExtension extends Extension
      */
     public function literals(): array
     {
-        return [Interval::class => fn() => new IntervalType()];
+        return [Interval::class => fn(object $interval) => new IdentityLiteralType($interval, new IntervalType())];
     }
 
     /**
