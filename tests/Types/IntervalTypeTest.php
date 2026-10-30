@@ -105,4 +105,35 @@ class IntervalTypeTest extends TestCase
 
         (new IntervalType())->format('[1,2]');
     }
+
+    #[Test]
+    #[DataProvider('identities')]
+    public function it_keys_intervals_alike_exactly_when_they_are_equal(string $left, string $right): void
+    {
+        $type = new IntervalType();
+        $a = Interval::fromString($left);
+        $b = Interval::fromString($right);
+
+        $this->assertSame($a->isEqualTo($b), $type->identityKey($a) === $type->identityKey($b));
+    }
+
+    public static function identities(): array
+    {
+        return [
+            'same spelling' => ['[1,2]', '[1,2]'],
+            'trailing zeros' => ['[1,2]', '[1.0,2.00]'],
+            'fractions' => ['[1.5,2]', '[1.50,2]'],
+            'different bound' => ['[1,2]', '[1,3]'],
+            'different openness' => ['[1,2]', '[1,2)'],
+            'negative zero' => ['[-0.0,1]', '[0,1]'],
+        ];
+    }
+
+    #[Test]
+    public function it_refuses_to_key_a_non_interval(): void
+    {
+        $this->expectException(TransformValueException::class);
+
+        (new IntervalType())->identityKey('[1,2]');
+    }
 }

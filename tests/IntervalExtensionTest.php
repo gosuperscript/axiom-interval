@@ -20,6 +20,8 @@ use Superscript\Axiom\Sources\InfixExpression;
 use Superscript\Axiom\Sources\StaticSource;
 use Superscript\Axiom\Sources\SymbolSource;
 use Superscript\Axiom\Types\BooleanType;
+use Superscript\Axiom\Types\IdentityLiteralType;
+use Superscript\Axiom\Types\UnionType;
 
 #[CoversClass(IntervalExtension::class)]
 #[UsesClass(IntervalType::class)]
@@ -80,13 +82,13 @@ class IntervalExtensionTest extends TestCase
     #[DataProvider('equalities')]
     public function it_compares_two_intervals_for_equality(string $left, string $operator, string $right, bool $expected): void
     {
-        $source = new InfixExpression(
-            new StaticSource(Interval::fromString($left)),
-            $operator,
-            new StaticSource(Interval::fromString($right)),
-        );
+        $source = new InfixExpression(new SymbolSource('left'), $operator, new SymbolSource('right'));
 
-        $result = $this->evaluate($source, [], []);
+        $result = $this->evaluate(
+            $source,
+            ['left' => new IntervalType(), 'right' => new IntervalType()],
+            ['left' => $left, 'right' => $right],
+        );
 
         $this->assertSame($expected, $result);
     }
@@ -102,16 +104,64 @@ class IntervalExtensionTest extends TestCase
     }
 
     #[Test]
+    public function it_compares_two_spellings_of_one_literal_as_equal(): void
+    {
+        $source = new InfixExpression(
+            new StaticSource(Interval::fromString('[1,2]')),
+            '==',
+            new StaticSource(Interval::fromString('[1.0,2.00]')),
+        );
+
+        $this->assertTrue($this->evaluate($source, [], []));
+    }
+
+    #[Test]
+    #[DataProvider('equalityOperators')]
+    public function it_refuses_to_compile_an_equality_between_literals_that_can_never_be_equal(string $operator): void
+    {
+        $source = new InfixExpression(
+            new StaticSource(Interval::fromString('[1,2]')),
+            $operator,
+            new StaticSource(Interval::fromString('(1,2)')),
+        );
+
+        $result = (new Expression($source, dialect: $this->dialect()))->compile();
+
+        $this->assertTrue($result->isErr());
+    }
+
+    public static function equalityOperators(): Generator
+    {
+        foreach (['=', '==', '===', '!=', '!=='] as $operator) {
+            yield $operator => [$operator];
+        }
+    }
+
+    #[Test]
+    public function it_refuses_to_compile_a_band_compared_to_a_literal_outside_its_bands(): void
+    {
+        $band = new UnionType(
+            new IdentityLiteralType(Interval::fromString('[5,10]'), new IntervalType()),
+            new IdentityLiteralType(Interval::fromString('[10,20]'), new IntervalType()),
+        );
+        $outside = new InfixExpression(new SymbolSource('band'), '==', new StaticSource(Interval::fromString('[1,5]')));
+        $inside = new InfixExpression(new SymbolSource('band'), '==', new StaticSource(Interval::fromString('[5.0,10]')));
+
+        $this->assertTrue((new Expression($outside, dialect: $this->dialect(), declarations: ['band' => $band]))->compile()->isErr());
+        $this->assertTrue($this->evaluate($inside, ['band' => $band], ['band' => '[5,10]']));
+    }
+
+    #[Test]
     public function it_registers_the_interval_literal(): void
     {
-        // A bare interval literal compiles (typed through the extension's
-        // literal registration) and evaluates to itself.
+        // A bare interval literal compiles, typed as itself through the
+        // extension's literal registration, and evaluates to itself.
         $program = (new Expression(
             new StaticSource(Interval::fromString('[1,2]')),
             dialect: $this->dialect(),
         ))->compile()->unwrap();
 
-        $this->assertInstanceOf(IntervalType::class, $program->returns);
+        $this->assertInstanceOf(IdentityLiteralType::class, $program->returns);
         $this->assertTrue($program()->unwrap()->unwrap()->isEqualTo(Interval::fromString('[1,2]')));
     }
 
